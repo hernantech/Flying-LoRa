@@ -1,0 +1,54 @@
+.camera-container {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: #000;
+    overflow: hidden;
+}
+
+#live-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+#detection-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#three-container {
+    width: 100%;
+    height: 400px;
+    background: #1a1a1a;
+}
+
+#network-map {
+    width: 100%;
+    height: 300px;
+    background: #f8f9fa;
+    margin-bottom: 1rem;
+}
+
+.network-stats .progress {
+    height: 10px;
+    margin-bottom: 1rem;
+}
+
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+#performance-chart {
+    width: 100%;
+    height: 200px;
+} 

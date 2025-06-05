@@ -1,0 +1,46 @@
+server:
+  debug: true
+  workers: 1
+  request_timeout: 60
+
+detection:
+  model_path: "models/yolov5s.pt"
+  confidence_threshold: 0.3  # Lower threshold for development
+  frame_skip: 1  # Process every frame
+
+database:
+  url: "sqlite:///data/flying_lora_dev.db"
+  echo: true  # SQL query logging
+
+redis:
+  url: "redis://localhost:6379/1"  # Use different database for development
+
+logging:
+  level: "DEBUG"
+  file: "logs/flying_lora_dev.log"
+
+metrics:
+  enabled: true
+  prometheus_port: 9091  # Different port for development
+
+security:
+  cors_origins: [
+    "http://localhost:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:3000"
+  ]
+  rate_limit: 0  # Disable rate limiting in development
+  token_expiry: 86400  # 24 hours for development
+
+# Development-specific settings
+development:
+  hot_reload: true
+  mock_hardware: true  # Use hardware simulation
+  profile_endpoints: true  # Enable endpoint profiling
+  auto_reload_config: true
+  stub_external_services: true  # Use mock external services
+  test_data:
+    enabled: true
+    seed: 12345
+    num_drones: 3
+    num_detections: 100 

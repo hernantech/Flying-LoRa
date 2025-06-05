@@ -1,53 +1,73 @@
-from flask import Flask, jsonify, request
+import os
+import sys
+import logging
+from dotenv import load_dotenv
+from app import create_app, socketio
+from app.config.config import config
 
-app = Flask(__name__)
+# Load environment variables
+load_dotenv()
 
-# Global variable to store current operation mode
-current_mode = 1  # Default to mode 1
+# Create Flask application
+app = create_app()
 
-@app.route('/')
-def root():
-    """Root endpoint that shows available endpoints"""
-    return jsonify({
-        'available_endpoints': {
-            '/': 'This help message',
-            '/mode': 'GET to read mode, POST to set mode',
-            '/status': 'GET server status and current mode'
-        },
-        'current_mode': current_mode
-    })
+# Configure logging
+logger = logging.getLogger(__name__)
 
-@app.route('/mode', methods=['GET'])
-def get_mode():
-    """Get the current operation mode"""
-    return jsonify({'mode': current_mode})
+@app.before_first_request
+def before_first_request():
+    """Initialize application before first request."""
+    try:
+        # Validate configuration
+        if not config.validate():
+            logger.error("Invalid configuration. Please check your settings.")
+            sys.exit(1)
+        
+        # Initialize services
+        from app.services.detection_service import DetectionService
+        from app.services.localization_service import LocalizationService
+        from app.services.drone_service import DroneService
+        from app.services.lora_service import LoRaService
+        
+        DetectionService.initialize()
+        LocalizationService.initialize()
+        DroneService.initialize()
+        LoRaService.initialize()
+        
+        logger.info("All services initialized successfully")
+        
+    except Exception as e:
+        logger.error(f"Error during initialization: {e}")
+        sys.exit(1)
 
-@app.route('/mode', methods=['POST'])
-def set_mode():
-    """Set the operation mode"""
-    global current_mode
-    data = request.get_json()
-    
-    if 'mode' not in data:
-        return jsonify({'error': 'Mode not specified'}), 400
-    
-    new_mode = data['mode']
-    
-    # Validate mode
-    if new_mode not in [1, 2, 3]:
-        return jsonify({'error': 'Invalid mode. Must be 1, 2, or 3'}), 400
-    
-    current_mode = new_mode
-    return jsonify({'mode': current_mode})
-
-@app.route('/status', methods=['GET'])
-def get_status():
-    """Get the server status and current mode"""
-    return jsonify({
-        'status': 'running',
-        'mode': current_mode
-    })
+@app.route('/health')
+def health_check():
+    """Basic health check endpoint."""
+    return {'status': 'healthy'}, 200
 
 if __name__ == '__main__':
-    # Run the server on all available network interfaces
-    app.run(host='0.0.0.0', port=8080, debug=True) 
+    host = config.get('server.host', '0.0.0.0')
+    port = config.get('server.port', 5000)
+    debug = config.get('server.debug', False)
+    
+    # Configure SSL if in production
+    ssl_context = None
+    if os.getenv('FLASK_ENV') == 'production':
+        ssl_cert = config.get('security.ssl_cert')
+        ssl_key = config.get('security.ssl_key')
+        if ssl_cert and ssl_key:
+            ssl_context = (ssl_cert, ssl_key)
+    
+    try:
+        logger.info(f"Starting server on {host}:{port}")
+        socketio.run(
+            app,
+            host=host,
+            port=port,
+            debug=debug,
+            use_reloader=config.get('development.hot_reload', False),
+            ssl_context=ssl_context
+        )
+    except Exception as e:
+        logger.error(f"Error starting server: {e}")
+        sys.exit(1) 

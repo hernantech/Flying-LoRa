@@ -1,0 +1,292 @@
+openapi: 3.0.3
+info:
+  title: Flying LoRa API
+  description: |
+    API documentation for the Flying LoRa localization system.
+    
+    This API provides endpoints for:
+    - Real-time object detection
+    - Object position tracking
+    - Drone telemetry and control
+    - LoRa network management
+    - System monitoring and configuration
+  version: 1.0.0
+  contact:
+    name: Flying LoRa Team
+    url: https://github.com/abumostafa/Flying-LoRa
+
+servers:
+  - url: http://localhost:5000
+    description: Development server
+  - url: https://api.flying-lora.local
+    description: Production server
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+
+    Detection:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        object_type:
+          type: string
+        confidence:
+          type: number
+          format: float
+        bbox:
+          type: object
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+            width:
+              type: number
+            height:
+              type: number
+        position:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+            longitude:
+              type: number
+              format: float
+            altitude:
+              type: number
+              format: float
+
+    DroneState:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        position:
+          type: object
+          properties:
+            latitude:
+              type: number
+              format: float
+            longitude:
+              type: number
+              format: float
+            altitude:
+              type: number
+              format: float
+        battery:
+          type: object
+          properties:
+            percentage:
+              type: number
+            voltage:
+              type: number
+        status:
+          type: string
+          enum: [idle, flying, returning, emergency]
+
+    LoRaMessage:
+      type: object
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        rssi:
+          type: number
+        snr:
+          type: number
+        frequency:
+          type: number
+        payload:
+          type: string
+          format: byte
+
+paths:
+  /api/detection/stream:
+    get:
+      summary: Stream real-time detections
+      description: WebSocket endpoint for real-time object detection stream
+      tags:
+        - Detection
+      responses:
+        '101':
+          description: WebSocket connection established
+
+  /api/detection/history:
+    get:
+      summary: Get detection history
+      description: Retrieve historical detection data
+      tags:
+        - Detection
+      parameters:
+        - name: start_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: object_type
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of detections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Detection'
+
+  /api/drone/state:
+    get:
+      summary: Get drone state
+      description: Get current drone telemetry and state
+      tags:
+        - Drone
+      responses:
+        '200':
+          description: Current drone state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DroneState'
+
+  /api/drone/command:
+    post:
+      summary: Send drone command
+      description: Send control command to the drone
+      tags:
+        - Drone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+                  enum: [takeoff, land, return, move]
+                parameters:
+                  type: object
+      responses:
+        '200':
+          description: Command accepted
+        '400':
+          description: Invalid command
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/lora/messages:
+    get:
+      summary: Get LoRa messages
+      description: Retrieve LoRa network messages
+      tags:
+        - LoRa
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        '200':
+          description: List of LoRa messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LoRaMessage'
+
+  /api/system/health:
+    get:
+      summary: System health check
+      description: Get system health status
+      tags:
+        - System
+      responses:
+        '200':
+          description: System health information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, degraded, unhealthy]
+                  components:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                      redis:
+                        type: string
+                      lora:
+                        type: string
+                      detection:
+                        type: string
+
+  /api/system/metrics:
+    get:
+      summary: System metrics
+      description: Get system performance metrics
+      tags:
+        - System
+      responses:
+        '200':
+          description: System metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+
+tags:
+  - name: Detection
+    description: Object detection and tracking endpoints
+  - name: Drone
+    description: Drone control and telemetry endpoints
+  - name: LoRa
+    description: LoRa network management endpoints
+  - name: System
+    description: System monitoring and configuration endpoints 

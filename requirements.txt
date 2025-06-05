@@ -1,4 +1,77 @@
+# Flask and Extensions
 Flask==3.0.2
-python-dotenv==1.0.1
+Flask-SocketIO==5.3.6
+Flask-CORS==4.0.0
+Flask-Limiter==3.5.1
+prometheus-flask-exporter==0.23.0
+python-socketio==5.11.1
+python-engineio==4.9.0
+eventlet==0.35.2
+gunicorn==21.2.0
+
+# Database and Caching
+SQLAlchemy==2.0.28
+psycopg2-binary==2.9.9
+redis==5.0.2
+alembic==1.13.1
+
+# Hardware Interface
 pyserial==3.5
-requests==2.31.0 
+RPi.GPIO==0.7.1  # For Raspberry Pi GPIO
+adafruit-circuitpython-rfm9x==2.3.7  # For LoRa module
+
+# Computer Vision and ML
+opencv-python==4.9.0.80
+numpy==1.26.4
+torch==2.2.1
+torchvision==0.17.1
+ultralytics==8.1.28  # YOLOv5
+
+# Utilities
+python-dotenv==1.0.1
+PyYAML==6.0.1
+psutil==5.9.8
+requests==2.31.0
+pyjwt==2.8.0
+cryptography==42.0.5
+python-dateutil==2.9.0
+pytz==2024.1
+
+# Testing
+pytest==8.0.2
+pytest-cov==4.1.0
+pytest-benchmark==4.0.0
+pytest-mock==3.12.0
+pytest-asyncio==0.23.5
+
+# Development
+black==24.2.0
+flake8==7.0.0
+mypy==1.8.0
+isort==5.13.2
+pre-commit==3.6.2
+
+# Documentation
+Sphinx==7.2.6
+sphinx-rtd-theme==2.0.0
+sphinx-autodoc-typehints==2.0.1
+
+# Core dependencies
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-RESTful==0.3.10
+
+# WebSocket and async
+websockets==12.0
+asyncio==3.4.3
+aiohttp==3.9.1
+
+# Metrics and monitoring
+prometheus-client==0.19.0
+python-json-logger==2.0.7
+jtop==3.1.1
+
+# Security
+python-jose[cryptography]==3.3.0
+passlib==1.7.4
+bcrypt==4.0.1 

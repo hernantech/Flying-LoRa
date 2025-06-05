@@ -1,0 +1,82 @@
+server:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+  workers: 4
+  request_timeout: 30
+
+detection:
+  enabled: true
+  model_path: "models/yolov5s.pt"
+  confidence_threshold: 0.5
+  nms_threshold: 0.45
+  max_detections: 100
+  frame_skip: 2
+  batch_size: 1
+
+localization:
+  algorithm: "triangulation"
+  min_detections: 2
+  max_age: 30
+  min_confidence: 0.6
+  position_smoothing: 0.3
+
+drone:
+  telemetry_rate: 10
+  position_rate: 5
+  control_timeout: 2.0
+  max_velocity: 10.0
+  return_home_battery: 20
+
+lora:
+  device: "/dev/ttyUSB0"
+  baud_rate: 115200
+  frequency: 915.0
+  bandwidth: 125.0
+  spreading_factor: 7
+  coding_rate: 5
+  sync_word: 0x12
+  power: 20
+  retry_count: 3
+  ack_timeout: 2.0
+
+database:
+  type: "sqlite"
+  url: "sqlite:///data/flying_lora.db"
+  pool_size: 10
+  max_overflow: 20
+  pool_timeout: 30
+
+redis:
+  url: "redis://localhost:6379"
+  max_connections: 10
+  socket_timeout: 5.0
+  retry_on_timeout: true
+
+websocket:
+  ping_interval: 25
+  ping_timeout: 10
+  max_message_size: 1048576
+  max_queue_size: 100
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s [%(levelname)s] %(message)s"
+  date_format: "%Y-%m-%d %H:%M:%S"
+  file: "logs/flying_lora.log"
+  max_size: 10485760
+  backup_count: 5
+
+metrics:
+  enabled: true
+  collection_interval: 10
+  retention_days: 7
+  prometheus_port: 9090
+
+security:
+  cors_origins: ["http://localhost:3000"]
+  rate_limit: 100
+  rate_limit_period: 60
+  token_expiry: 3600
+  max_token_refresh: 7
+  password_min_length: 8 

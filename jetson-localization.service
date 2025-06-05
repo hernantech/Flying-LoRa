@@ -1,0 +1,58 @@
+[Unit]
+Description=Flying LoRa Localization Server
+After=network.target redis-server.service postgresql.service
+Requires=redis-server.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=jetson
+Group=jetson
+WorkingDirectory=/opt/flying-lora
+Environment=FLASK_ENV=production
+Environment=FLASK_APP=app.py
+Environment=PYTHONPATH=/opt/flying-lora
+EnvironmentFile=/opt/flying-lora/.env
+
+# Resource limits
+CPUQuota=80%
+MemoryLimit=2G
+TasksMax=1000
+
+# Restart configuration
+Restart=always
+RestartSec=5
+StartLimitInterval=0
+
+# Security settings
+NoNewPrivileges=yes
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictNamespaces=yes
+
+# Hardware access
+DeviceAllow=/dev/ttyUSB0 rw
+DeviceAllow=/dev/video0 rw
+DeviceAllow=/dev/gpiochip0 rw
+DeviceAllow=/dev/i2c-1 rw
+
+ExecStartPre=/bin/mkdir -p /opt/flying-lora/logs
+ExecStartPre=/bin/chown -R jetson:jetson /opt/flying-lora/logs
+ExecStart=/opt/flying-lora/venv/bin/gunicorn \
+    --workers 4 \
+    --worker-class eventlet \
+    --bind 0.0.0.0:5000 \
+    --log-file /opt/flying-lora/logs/gunicorn.log \
+    --access-logfile /opt/flying-lora/logs/access.log \
+    --error-logfile /opt/flying-lora/logs/error.log \
+    --capture-output \
+    --enable-stdio-inheritance \
+    app:app
+
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target 

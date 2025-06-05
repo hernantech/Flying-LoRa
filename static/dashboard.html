@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flying LoRa - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Flying LoRa</a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="dashboard.html">Dashboard</a>
+                <a class="nav-link" href="control.html">Control Panel</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <!-- Camera Feed and Detection -->
+            <div class="col-lg-8">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Live Camera Feed</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="camera-feed" class="camera-container">
+                            <video id="live-feed" autoplay muted></video>
+                            <canvas id="detection-overlay"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 3D Visualization -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>3D Visualization</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="three-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side Panels -->
+            <div class="col-lg-4">
+                <!-- Performance Metrics -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- LoRa Network Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>LoRa Network Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="network-map"></div>
+                        <div class="network-stats mt-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h6>Signal Strength</h6>
+                                    <div class="progress">
+                                        <div id="signal-strength" class="progress-bar" role="progressbar" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <h6>Network Quality</h6>
+                                    <div class="progress">
+                                        <div id="network-quality" class="progress-bar" role="progressbar" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html> 

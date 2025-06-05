@@ -1,0 +1,60 @@
+# Start from NVIDIA L4T ML base image
+FROM nvcr.io/nvidia/l4t-ml:r32.6.1-py3
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    FLASK_ENV=production \
+    FLASK_APP=app.py
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgstreamer1.0-0 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    python3-gst-1.0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Install additional Jetson-specific packages
+RUN pip3 install --no-cache-dir \
+    jetson-stats \
+    jtop \
+    jetson-utils
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/logs /app/data /app/models
+
+# Download YOLOv5 model
+RUN python3 -c "from ultralytics import YOLO; YOLO('yolov5s.pt')"
+
+# Set up environment for hardware access
+ENV OPENBLAS_CORETYPE=ARMV8
+
+# Expose ports
+EXPOSE 5000 9090
+
+# Set up entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Run the application
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["gunicorn", "-k", "eventlet", "-w", "4", "-b", "0.0.0.0:5000", "app:app"] 

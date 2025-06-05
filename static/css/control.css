@@ -1,0 +1,63 @@
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.log-container {
+    height: 400px;
+    overflow-y: auto;
+    background: #f8f9fa;
+    padding: 1rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.log-entry {
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.log-entry.error {
+    color: #dc3545;
+}
+
+.log-entry.warning {
+    color: #ffc107;
+}
+
+.log-entry.info {
+    color: #0d6efd;
+}
+
+.form-range {
+    width: 100%;
+}
+
+#confidence-value,
+#interval-value {
+    display: inline-block;
+    min-width: 40px;
+    text-align: center;
+    margin-left: 1rem;
+}
+
+.btn-group {
+    margin-left: auto;
+}
+
+textarea.form-control {
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+#config-editor {
+    min-height: 300px;
+} 

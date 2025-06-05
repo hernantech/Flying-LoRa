@@ -1,0 +1,73 @@
+server:
+  debug: false
+  workers: 4
+  request_timeout: 30
+
+detection:
+  model_path: "/opt/flying_lora/models/yolov5s.pt"
+  confidence_threshold: 0.5
+  frame_skip: 2
+
+database:
+  url: "postgresql://user:password@db.example.com:5432/flying_lora"
+  pool_size: 20
+  max_overflow: 40
+  pool_timeout: 30
+  echo: false
+
+redis:
+  url: "redis://redis.example.com:6379"
+  max_connections: 20
+  socket_timeout: 3.0
+
+logging:
+  level: "INFO"
+  file: "/var/log/flying_lora/app.log"
+  max_size: 52428800  # 50MB
+  backup_count: 10
+
+metrics:
+  enabled: true
+  collection_interval: 5
+  retention_days: 30
+  prometheus_port: 9090
+
+security:
+  cors_origins: [
+    "https://flying-lora.example.com",
+    "https://api.flying-lora.example.com"
+  ]
+  rate_limit: 100
+  rate_limit_period: 60
+  token_expiry: 3600
+  ssl_cert: "/etc/ssl/certs/flying_lora.crt"
+  ssl_key: "/etc/ssl/private/flying_lora.key"
+
+# Production-specific settings
+production:
+  hardware_watchdog: true
+  backup_interval: 3600
+  backup_retention: 7
+  monitoring:
+    enabled: true
+    prometheus: true
+    grafana: true
+    alert_email: "alerts@flying-lora.example.com"
+  scaling:
+    auto_scale: true
+    min_instances: 2
+    max_instances: 10
+    target_cpu: 70
+  cache:
+    enabled: true
+    ttl: 300
+    max_size: 1000000
+  storage:
+    type: "s3"
+    bucket: "flying-lora-data"
+    region: "us-west-2"
+    backup_enabled: true
+  cdn:
+    enabled: true
+    provider: "cloudfront"
+    domain: "cdn.flying-lora.example.com" 
